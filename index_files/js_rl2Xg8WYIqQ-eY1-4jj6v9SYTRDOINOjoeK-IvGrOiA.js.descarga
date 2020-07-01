@@ -1,0 +1,167 @@
+
++function ($) {
+    var limitTextarea2 = function () {
+        var max_chars = 1000;
+        var max_chars2 = 500;
+        var max_chars3 = 200;
+        var max_chars4 = 500;
+        $('#max').html(max_chars);
+        $('.page-contact-indraventures #edit-initiative-overview').keyup(function () {
+            var chars = $(this).val().length;
+            var diff = max_chars- chars;
+            $('#textarea-lenght-contador1000').html(diff);
+        });
+        $('.page-contact-indraventures #edit-value-proposition').keyup(function () {
+            var chars = $(this).val().length;
+            var diff = max_chars2- chars;
+            $('#textarea-lenght-contador500').html(diff);
+        });
+        $('.page-contact-indraventures #edit-innovative-approach').keyup(function () {
+            var chars = $(this).val().length;
+            var diff = max_chars3- chars;
+            $('#textarea-lenght-contador200').html(diff);
+        });
+        $('.page-contact-indraventures #edit-help-innitiative').keyup(function () {
+            var chars = $(this).val().length;
+            var diff = max_chars4- chars;
+            $('#textarea-lenght-contador5001').html(diff);
+        });
+    }
+    Drupal.behaviors.innovation = {
+        attach: function (context, settings) {
+            limitTextarea2();
+        }
+    };
+}(jQuery);
+
+
+;
++function ($) {
+    var votingSeting = function () {
+        if (Drupal.settings.indra_universidad_voting) {
+            $.each(Drupal.settings.indra_universidad_voting, function (index, item) {
+                var $voting = $('#' + item);
+                if ($voting.length) {
+                    $voting.removeClass('uni-voting');
+                    $voting.addClass('no-uni-voting');
+                }
+            });
+        }
+    };
+    var votingAjax = function () {
+        $(".uni-voting").click(function (e) {
+            e.preventDefault();
+            var id = $(this).attr("id");
+            var num = $(this).html();
+            var dataString = 'nid=' + id + '&num=' + num;
+            var parent = $(this);
+            $(this).fadeOut(300);
+            var baseurl = Drupal.settings.basePath;
+            var url = baseurl + "universidad/voting/ajax";
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: dataString,
+                cache: false,
+                success: function (text) {
+                    if ('' != text) {
+                        parent.unbind("click");
+                        parent.html(text);
+                        parent.removeClass('uni-voting');
+                        parent.addClass('no-uni-voting');
+                        parent.fadeIn(200);
+                    }
+                },
+            });
+            return false;
+        });
+
+    };
+
+    var votingFullHeart = function () {
+        $('div.voting').each(function () {
+            var amount = $(this).html();
+            if (100 < amount) {
+                $(this).addClass('full-heart');
+            }
+        });
+    }
+
+    var limitTextarea = function () {
+        var max_chars = 280;
+        $('#max').html(max_chars);
+        $('.page-aprendernoshacemejores-participa #edit-testimony').keyup(function () {
+            var chars = $(this).val().length;
+            var diff = max_chars - chars;
+            $('#textarea-lenght-contador').html(diff);
+            if (chars >= max_chars) {
+                var subsvalue = $(this).val().substr(0, max_chars-1);
+                $(this).val(subsvalue);
+                $message = $("#textarea-lenght-contador");
+                $message.css("color", 'red');
+                $message.parent().css("color", 'red');
+            }
+
+
+        });
+    }
+
+    var universidadHiddenItaliano = function () {
+        $(".teaser-universidad-header #hlang a[href^='/it/']").css('display', 'none');
+    }
+    var universidadLogoHome = function () {
+        var $logo = $('body header.teaser-universidad-header .top-navbar .container .navbar-header a.navbar-brand');
+        if (Drupal.settings.hasOwnProperty("pathPrefix")) {
+            $logo.attr('href', '\/' + Drupal.settings.pathPrefix + 'aprendernoshacemejores');
+        }
+    }
+
+    Drupal.behaviors.universidadVotingSeting = {
+        attach: function (context, settings) {
+            votingSeting();
+            votingAjax();
+            votingFullHeart();
+            limitTextarea();
+            universidadHiddenItaliano();
+            universidadLogoHome();
+        }
+    };
+}(jQuery);
+
+
+;
+(function ($) {
+
+$(document).ready(function() {
+
+  // Attach mousedown, keyup, touchstart events to document only and catch
+  // clicks on all elements.
+  $(document.body).bind("mousedown keyup touchstart", function(event) {
+
+    // Catch the closest surrounding link of a clicked element.
+    $(event.target).closest("a,area").each(function() {
+
+      if (Drupal.settings.matomo.trackMailto && $(this).is("a[href^='mailto:'],area[href^='mailto:']")) {
+        // Mailto link clicked.
+        _paq.push(["trackEvent", "Mails", "Click", this.href.substring(7)]);
+      }
+
+    });
+  });
+
+  // Colorbox: This event triggers when the transition has completed and the
+  // newly loaded content has been revealed.
+  if (Drupal.settings.matomo.trackColorbox) {
+    $(document).bind("cbox_complete", function () {
+      var href = $.colorbox.element().attr("href");
+      if (href) {
+        _paq.push(["setCustomUrl", href]);
+        _paq.push(["trackPageView"]);
+      }
+    });
+  }
+
+});
+
+})(jQuery);
+;

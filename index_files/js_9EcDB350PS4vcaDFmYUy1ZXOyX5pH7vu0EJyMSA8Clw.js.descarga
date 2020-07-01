@@ -1,0 +1,81 @@
+(function($) {
+
+/**
+ * jQuery debugging helper.
+ *
+ * Invented for Dreditor.
+ *
+ * @usage
+ *   $.debug(var [, name]);
+ *   $variable.debug( [name] );
+ */
+jQuery.extend({
+  debug: function () {
+    // Setup debug storage in global window. We want to look into it.
+    window.debug = window.debug || [];
+
+    args = jQuery.makeArray(arguments);
+    // Determine data source; this is an object for $variable.debug().
+    // Also determine the identifier to store data with.
+    if (typeof this == 'object') {
+      var name = (args.length ? args[0] : window.debug.length);
+      var data = this;
+    }
+    else {
+      var name = (args.length > 1 ? args.pop() : window.debug.length);
+      var data = args[0];
+    }
+    // Store data.
+    window.debug[name] = data;
+    // Dump data into Firebug console.
+    if (typeof console != 'undefined') {
+      console.log(name, data);
+    }
+    return this;
+  }
+});
+// @todo Is this the right way?
+jQuery.fn.debug = jQuery.debug;
+
+})(jQuery);
+;
+function indra_form_sent_form_callback(event) {
+    event.preventDefault();
+    var baseurl = Drupal.settings.basePath;
+    var url = baseurl + "admin/content/formsent/table/ajax";
+    var dataSerialize = jQuery('#indra-form-sent-filter-form').serialize();
+    jQuery.ajax({
+        url: url,
+        type: 'POST',
+        dataType: 'html',
+        data: dataSerialize,
+        success: function (data) {
+            jQuery('#form-sent-ui').empty();
+            jQuery('#form-sent-ui').append(data);
+        },
+        error: function (xhr, ajaxOptions, trhownError) {
+            alert('Error');
+        }
+    });
+}
+;
+/**
+ * Script de twitter.
+ */
+window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  fjs.parentNode.insertBefore(js, fjs);
+ 
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+ 
+  return t;
+}(document, "script", "twitter-wjs"));
+;
